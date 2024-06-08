@@ -1,0 +1,117 @@
+openapi: 3.0.0
+info:
+  title: Agile Agents API
+  description: This is the API specification for the Agile Agents platform, enabling dynamic GPU compute resource allocation.
+  version: 1.0.0
+servers:
+  - url: http://api.agileagents.com/v1
+paths:
+  /jobs:
+    post:
+      summary: Submit a new job
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobSubmission'
+      responses:
+        '200':
+          description: Job successfully submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+  /jobs/{job_id}:
+    get:
+      summary: Get job status
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Job status retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobStatus'
+  /workers:
+    get:
+      summary: List registered worker nodes
+      responses:
+        '200':
+          description: Worker nodes listed
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Worker'
+  /workers/{worker_id}/heartbeat:
+    post:
+      summary: Worker heartbeat update
+      parameters:
+        - name: worker_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkerHeartbeat'
+      responses:
+        '200':
+          description: Heartbeat updated
+components:
+  schemas:
+    Job:
+      type: object
+      properties:
+        id:
+          type: string
+        worker_id:
+          type: string
+        status:
+          type: string
+        input_data:
+          type: object
+        result_data:
+          type: object
+    JobSubmission:
+      type: object
+      properties:
+        worker_id:
+          type: string
+        input_data:
+          type: object
+    JobStatus:
+      type: object
+      properties:
+        job_id:
+          type: string
+        status:
+          type: string
+    Worker:
+      type: object
+      properties:
+        id:
+          type: string
+        ip_address:
+          type: string
+        capacity:
+          type: integer
+        utilization:
+          type: integer
+    WorkerHeartbeat:
+      type: object
+      properties:
+        worker_id:
+          type: string
+        utilization:
+          type: integer

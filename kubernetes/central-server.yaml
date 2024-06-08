@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: central-server
+  labels:
+    app: central-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: central-server
+  template:
+    metadata:
+      labels:
+        app: central-server
+    spec:
+      containers:
+      - name: central-server
+        image: central-server:latest
+        ports:
+        - containerPort: 80
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: central-server
+spec:
+  selector:
+    app: central-server
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
